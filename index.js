@@ -10,8 +10,8 @@ app.use(cors());
 // Define storage configurations for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dirSite = './uploads/forSite';
-    const dirDashboard = './uploads/forDashboard';
+    const dirSite = './frontend/src/assets/uploads/forSite';
+    const dirDashboard = './frontend/src/assets/uploads/forDashboard';
     if (!fs.existsSync(dirSite)) {
       fs.mkdirSync(dirSite, { recursive: true });
     }
@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 
 const dashboardStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dirDashboard = './uploads/forDashboard';
+    const dirDashboard = './frontend/src/assets/uploads/forDashboard';
     if (!fs.existsSync(dirDashboard)) {
       fs.mkdirSync(dirDashboard, { recursive: true });
     }
@@ -42,7 +42,7 @@ const dashboardStorage = multer.diskStorage({
 
 const siteStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dirSite = './uploads/forSite';
+    const dirSite = './frontend/src/assets/uploads/forSite';
     if (!fs.existsSync(dirSite)) {
       fs.mkdirSync(dirSite, { recursive: true });
     }
@@ -74,12 +74,12 @@ app.post('/upload', upload.single('file'), function (req, res) {
     return res.send({ error: 'Only JPEG, JPG, and PNG files are allowed' });
   } else {
     // Resize image for "forSite" folder
-    const resizedPicForSite = path.join('./uploads/forSite', `${file.filename}-resized.jpg`);
+    const resizedPicForSite = path.join('./frontend/src/assets/uploads/forSite', `${file.filename}-resized.jpg`);
     sharp(file.path)
       .resize(600, 100) //first is height second is width
       .toFile(resizedPicForSite, function (err, info) {
         if (err) {
-          res.send({ err, error: 'Error resizing image' });
+          return res.send({ err, error: 'Error resizing image' });
         } else {
           console.log(info);
           // Rename resized image file to overwrite original file
@@ -87,14 +87,14 @@ app.post('/upload', upload.single('file'), function (req, res) {
             if (err) {
               res.send({ err, error: 'Error replacing original file' });
             } else {
-              res.send({ filename: `${file.filename}` });
+              res.send({ filename: `${file.filename}-resized.jpg` });
             }
           });
         }
       });
 
     // Resize image for "forDashboard" folder
-    const resizedPicForDashboard = path.join('./uploads/forDashboard', `${file.filename}-resized.jpg`)
+    const resizedPicForDashboard = path.join('./frontend/src/assets/uploads/forDashboard', `${file.filename}-resized.jpg`)
     sharp(file.path)
       .resize(100, 600) //first is height second is width
       .toFile(resizedPicForDashboard, function (err, info) {

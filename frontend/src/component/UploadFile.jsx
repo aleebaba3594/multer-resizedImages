@@ -6,6 +6,8 @@ function UploadFile() {
   const [file, setFile] = useState(null);
   const [filename, setFilename] = useState('');
   const [filePreview, setFilePreview] = useState(defaultPic);
+  const [newFile, setNewFile] = useState()
+
 
   const handleChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -23,16 +25,18 @@ function UploadFile() {
     formData.append('file', file);
     try {
       const response = await axios.post('http://localhost:3001/upload', formData, {
-        // headers: {
-        //   'Content-Type': 'multipart/form-data'
-        // }
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
       setFilename(response.data.filename);
+      const imagePath = `http://localhost:3000/src/assets/uploads/forDashboard/${response.data.filename}`
+      setNewFile(imagePath)
     } catch (error) {
       console.error(error);
     }
   };
-
+  // console.log(newFile,"new photo");
   useEffect(() => {
     if (filePreview) {
       return () => URL.revokeObjectURL(filePreview);
@@ -47,6 +51,7 @@ function UploadFile() {
         <button type="submit">Upload</button>
       </form>
       {filename && <p>Uploaded filename: {filename}</p>}
+      {newFile && <img src={newFile} alt="Uploaded file" />}
     </div>
   );
 }
